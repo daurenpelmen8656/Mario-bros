@@ -96,11 +96,11 @@ public class PlayerMovement : MonoBehaviour
         }
         if (richtung < 0)
         {
-            transform.localScale = new Vector3(-1, 1, 1); // Flip the sprite instead of rotating the whole object
+            transform.localScale = new Vector3(-1.5f, 1.5f, 1); // Увеличить масштаб по оси X и Y
         }
         if (richtung > 0)
         {
-            transform.localScale = new Vector3(1, 1, 1); // Reset the sprite scale
+            transform.localScale = new Vector3(1.5f, 1.5f, 1); // Увеличить масштаб по оси X и Y
         }
 
         rb.velocity = new Vector2(richtung * speed, rb.velocity.y);
