@@ -1,52 +1,139 @@
+/*using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerMovement : MonoBehaviour
+{
+    public float speed = 5;
+    private Rigidbody2D rb;
+    public float jumph = 5;
+    private bool isgrounded = false;
+
+    private Animator anim;
+    private Vector3 rotation;
+
+    private void Start()
+    {
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        rotation = transform.eulerAngles;
+    }
+
+    void Update()
+    {
+        float richtung = Input.GetAxis("Horizontal");
+
+        if(richtung != 0)
+        {
+            anim.SetBool("isRunning", true);
+        }
+        else
+        {
+            anim.SetBool("isRunning", false);
+        }
+        if(richtung < 0)
+        {
+            transform.eulerAngles = rotation - new Vector3(0, 180, 0);
+            transform.Translate(Vector2.right * speed * -richtung * Time.deltaTime);
+        }
+        if (richtung > 0)
+        {
+            transform.eulerAngles = rotation;
+            transform.Translate(Vector2.right * speed * richtung * Time.deltaTime); 
+        }
+
+        if (Input.GetKey(KeyCode.Space) && isgrounded)
+        {
+            rb.AddForce(Vector2.up * jumph, ForceMode2D.Impulse);
+            isgrounded = false;
+        }
+    }
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "ground")
+        {
+            isgrounded = true;
+        }
+    }
+}
+*/
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float speed;
-    private Rigidbody2D body;
+    public float speed = 5;
+    private Rigidbody2D rb;
+    public float jumph = 5;
+    private bool isgrounded = false;
+
     private Animator anim;
-    private bool grounded;
+    private Vector3 rotation;
 
-    private void Awake()
+    private CoinManager m;
+
+    private void Start()
     {
-        //Grab references for rigidbody and animator from object 
-        body = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+        rotation = transform.eulerAngles;
+        m = GameObject.FindGameObjectWithTag("Text").GetComponent<CoinManager>();  
     }
 
-    private void Update()
+    void Update()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-        body.velocity = new Vector2(horizontalInput * speed, body.velocity.y);
+        float richtung = Input.GetAxis("Horizontal");
 
-        // Flip player when moving left-right
-        if (horizontalInput > 0.01f)
-            transform.localScale = new Vector3(4, transform.localScale.y, transform.localScale.z);
-        else if (horizontalInput < -0.01f)
-            transform.localScale = new Vector3(-4, transform.localScale.y, transform.localScale.z);
+        if (richtung != 0)
+        {
+            anim.SetBool("isRunning", true);
+        }
+        else
+        {
+            anim.SetBool("isRunning", false);
+        }
+        if (richtung < 0)
+        {
+            transform.localScale = new Vector3(-1, 1, 1); // Flip the sprite instead of rotating the whole object
+        }
+        if (richtung > 0)
+        {
+            transform.localScale = new Vector3(1, 1, 1); // Reset the sprite scale
+        }
 
-        if (Input.GetKey(KeyCode.Space) && grounded)
-            Jump();
+        rb.velocity = new Vector2(richtung * speed, rb.velocity.y);
 
-        //set animator parameters
-        anim.SetBool("run", horizontalInput != 0);
-        anim.SetBool("grounded", grounded);
+        if(isgrounded == false)
+        {
+            anim.SetBool("isJumping", true);
+        }
+        else
+        {
+            anim.SetBool("isJumping", false);
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.Space) && isgrounded)
+        {
+            rb.AddForce(Vector2.up * jumph, ForceMode2D.Impulse);
+            isgrounded = false;
+        }
     }
-    private void Jump()
-    {
-        body.velocity = new Vector2(body.velocity.x, speed);
-        anim.SetTrigger("jump");
-        grounded = false;
-    }
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Ground")
+        if (collision.gameObject.tag == "ground")
         {
-            grounded = true;
+            isgrounded = true;
+        }
+    }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Fruit")
+        {
+            m.Addmoney();
+            Destroy(other.gameObject);
         }
     }
 }
-
