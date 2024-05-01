@@ -23,7 +23,7 @@ public class HpBar : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.tag == "Enemy")
+        if (collision.gameObject.tag == "Snake")
         {
             HP -= 5;
             Bar.fillAmount = HP / 100;
