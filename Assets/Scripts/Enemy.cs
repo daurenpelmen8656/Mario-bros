@@ -40,6 +40,27 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
+    public float speed;
+    public Vector3[] positions;
+    private int currentTarget;
+
+    public void FixedUpdate()
+    {
+        if (currentTarget < positions.Length) // ѕровер€ем, что текущий индекс находитс€ в пределах массива
+        {
+            transform.position = Vector3.MoveTowards(transform.position, positions[currentTarget], speed);
+
+            if (transform.position == positions[currentTarget])
+            {
+                currentTarget++;
+            }
+        }
+        else
+        {
+            currentTarget = 0; // ≈сли текущий индекс выходит за пределы массива, сбрасываем его на начальное значение
+        }
+    }
+
     public int damageAmount = 10; // ”рон, который наносит враг
     public delegate void PlayerDamaged(int damage); // ƒелегат дл€ событи€ нанесени€ урона игроку
     public static event PlayerDamaged OnPlayerDamaged; // —обытие нанесени€ урона игроку
