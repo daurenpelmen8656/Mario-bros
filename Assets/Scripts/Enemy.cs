@@ -81,10 +81,6 @@ public class Enemy : MonoBehaviour
     private bool isFacingRight = true;
     private SpriteRenderer spriteRenderer;
 
-    public int damageAmount = 10; // Урон, который наносит враг
-    public delegate void PlayerDamaged(int damage); // Делегат для события нанесения урона игроку
-    public static event PlayerDamaged OnPlayerDamaged; // Событие нанесения урона игроку
-
     void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -129,26 +125,16 @@ public class Enemy : MonoBehaviour
         transform.localScale = newScale;
     }
 
+    public int damageAmount = 10;
+    public delegate void PlayerDamaged(int damage);
+    public static event PlayerDamaged OnPlayerDamaged;
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("Player")) // Проверяем столкновение с игроком
+        if (collision.gameObject.CompareTag("Player"))
         {
-            // Наносим урон игроку через событие OnPlayerDamaged
             OnPlayerDamaged?.Invoke(damageAmount);
         }
     }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Player")) // Проверяем столкновение с игроком
-        {
-            // Выводим сообщение о столкновении с игроком
-            Debug.Log("Столкновение с игроком");
-        }
-        else if (collision.gameObject.CompareTag("Snake")) // Проверяем столкновение с змеей
-        {
-            // Выводим сообщение о столкновении с змеей
-            Debug.Log("Столкновение с змеей");
-        }
-    }
 }
+

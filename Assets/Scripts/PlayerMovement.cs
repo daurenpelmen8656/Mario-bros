@@ -15,16 +15,7 @@ public class PlayerMovement : MonoBehaviour
 
     private CoinManager m;
 
-    public GameOverScreen GameOverScreen;
-    int maxPlatform = 0;
-
-    public void GameOver()
-    {
-        if (GameOverScreen != null)
-        {
-            GameOverScreen.Setup(maxPlatform);
-        }
-    }
+    
 
     private void Start()
     {

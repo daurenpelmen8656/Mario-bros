@@ -82829,7 +82829,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 6
   jumph: 8
-  GameOverScreen: {fileID: 2091851452}
 --- !u!61 &1927155815
 BoxCollider2D:
   m_ObjectHideFlags: 0
