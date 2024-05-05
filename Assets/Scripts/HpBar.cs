@@ -34,7 +34,7 @@ public class HpBar : MonoBehaviour
 {
     private float HP = 100f;
     public Image Bar;
-    public GameOverScreen GameOverScreen; // Ссылка на экран Game Over
+    private bool hasTakenDamage = false; // Флаг для отслеживания получения урона
 
     void Start()
     {
@@ -45,23 +45,44 @@ public class HpBar : MonoBehaviour
     {
         Bar.fillAmount = HP / 100;
 
-        // Проверяем, если здоровье игрока меньше или равно нулю, вызываем GameOver
         if (HP <= 0)
         {
-            if (GameOverScreen != null)
+            // Обработка смерти игрока
+            gameObject.SetActive(false);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Snake"))
+        {
+            if (!hasTakenDamage) // Проверяем, не получал ли уже урон игрок
             {
-                GameOverScreen.Setup(); // Вызываем метод Setup на экране Game Over
-            }
-            else
-            {
-                Debug.LogError("GameOverScreen is not assigned!");
+                HP -= 5;
+                hasTakenDamage = true; // Устанавливаем флаг, что получен урон
+                UpdateHealthBar();
             }
         }
     }
 
-    public void TakeDamage(float damage)
+    private void OnTriggerStay2D(Collider2D collision)
     {
-        HP -= damage;
-        UpdateHealthBar();
+        if (collision.gameObject.CompareTag("Snake"))
+        {
+            if (!hasTakenDamage) // Проверяем, не получал ли уже урон игрок
+            {
+                HP -= 5 * Time.deltaTime; // Уменьшаем здоровье со временем
+                hasTakenDamage = true; // Устанавливаем флаг, что получен урон
+                UpdateHealthBar();
+            }
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Snake"))
+        {
+            hasTakenDamage = false; // Сбрасываем флаг при выходе из зоны урона
+        }
     }
 }
