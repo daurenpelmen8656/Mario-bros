@@ -8,6 +8,8 @@ TagManager:
   - Fruit
   - Text
   - Snake
+  - 'Ground '
+  - Spike
   layers:
   - Default
   - TransparentFX
