@@ -15,14 +15,13 @@ public class PlayerMovement : MonoBehaviour
 
     private CoinManager m;
 
-    
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         rotation = transform.eulerAngles;
-        m = GameObject.FindGameObjectWithTag("Text").GetComponent<CoinManager>();  
+        m = GameObject.FindGameObjectWithTag("Text").GetComponent<CoinManager>();
     }
 
     void Update()
@@ -48,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
 
         rb.velocity = new Vector2(richtung * speed, rb.velocity.y);
 
-        if(isgrounded == false)
+        if (isgrounded == false)
         {
             anim.SetBool("isJumping", true);
         }

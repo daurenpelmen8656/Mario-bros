@@ -73,7 +73,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Snake : MonoBehaviour
 {
     public float speed;
     public Vector3[] positions;
@@ -125,15 +125,11 @@ public class Enemy : MonoBehaviour
         transform.localScale = newScale;
     }
 
-    public int damageAmount = 10;
-    public delegate void PlayerDamaged(int damage);
-    public static event PlayerDamaged OnPlayerDamaged;
-
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            OnPlayerDamaged?.Invoke(damageAmount);
+            FindObjectOfType<HpBar>().TakeDamage(10); // Наносим урон игроку
         }
     }
 }
