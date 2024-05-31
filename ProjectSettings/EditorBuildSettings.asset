@@ -6,14 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/FirebaseAuth.unity
+    guid: b5ee5d5ac144dc54b9eae971430e9432
+  - enabled: 1
+    path: Assets/Scenes/Main.unity
+    guid: 3fc8acdd13e6c734bafef6554d6fdbcd
+  - enabled: 1
     path: Assets/Scenes/First Level.unity
     guid: c794837f8a052f747ab7a27373144216
   - enabled: 1
     path: Assets/Scenes/Second Level.unity
     guid: ffc5b318a2787f8429c6e70d4eef497d
-  - enabled: 1
-    path: Assets/Scenes/Main.unity
-    guid: 3fc8acdd13e6c734bafef6554d6fdbcd
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: 49e460049a29b8c46846eb9723c19156, type: 2}
     UnityEditor.XR.ARKit.ARKitSettings: {fileID: 11400000, guid: 392de8ca019de9f4aae9072d9e24e346, type: 2}
