@@ -7,17 +7,18 @@ public class CoinManager : MonoBehaviour
 {
     public int geld; // Переменная для хранения количества денег (монет)
     public Text money; // UI текст для отображения количества денег
+    public PlayfabManager playfabManager; // Ссылка на PlayfabManager
 
     // Метод Start вызывается один раз при инициализации
     void Start()
     {
-        geld = PlayerPrefs.GetInt("Money", 0); // Получаем сохраненное значение денег из PlayerPrefs, если его нет, то значение по умолчанию - 0
+       // Получаем сохраненное значение денег из PlayerPrefs, если его нет, то значение по умолчанию - 0
     }
 
     // Метод Update вызывается каждый кадр
     void Update()
     {
-        money.text = PlayerPrefs.GetInt("Money", 0).ToString(); // Обновляем текст UI с текущим значением денег из PlayerPrefs
+        money.text = geld.ToString(); // Обновляем текст UI с текущим значением денег
     }
 
     // Метод для добавления денег (монет)
@@ -25,5 +26,14 @@ public class CoinManager : MonoBehaviour
     {
         geld++; // Увеличиваем количество денег на 1
         PlayerPrefs.SetInt("Money", geld); // Сохраняем обновленное количество денег в PlayerPrefs
+
+        if (playfabManager != null)
+        {
+            playfabManager.SendLeaderboard(geld); // Передаем количество монет в метод SendLeaderboard PlayfabManager
+        }
+        else
+        {
+            Debug.LogError("PlayfabManager reference is missing!");
+        }
     }
 }
