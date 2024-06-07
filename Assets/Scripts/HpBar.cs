@@ -1,52 +1,3 @@
-/*using UnityEngine;
-using UnityEngine.UI;
-
-public class HpBar : MonoBehaviour
-{
-    private float HP = 100f;
-    public Image Bar;
-    public GameObject gameOverScreen; // Ссылка на объект экрана Game Over
-
-    void Start()
-    {
-        UpdateHealthBar();
-    }
-
-    void UpdateHealthBar()
-    {
-        Bar.fillAmount = HP / 100;
-
-        if (HP <= 0)
-        {
-            ShowGameOverScreen(); // Показываем экран Game Over при смерти игрока
-            gameObject.SetActive(false); // Выключаем объект с здоровьем игрока
-        }
-    }
-
-    public void TakeDamage(float damage)
-    {
-        HP -= damage;
-        UpdateHealthBar();
-    }
-
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (collision.gameObject.CompareTag("Snake") || collision.gameObject.CompareTag("Spike"))
-        {
-            TakeDamage(5); // Наносим урон при столкновении с змеей или шипами
-        }
-    }
-
-    private void ShowGameOverScreen()
-    {
-        if (gameOverScreen != null)
-        {
-            gameOverScreen.SetActive(true); // Активируем экран Game Over
-        }
-    }
-}
-*/
-
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -59,8 +10,11 @@ public class HpBar : MonoBehaviour
     private float fallStartY; // Переменная для отслеживания начальной высоты падения
     private bool isFalling; // Флаг для проверки, падает ли игрок
 
+    private PlayerMovement playerMovement; // Ссылка на скрипт PlayerMovement для проверки щита
+
     void Start()
     {
+        playerMovement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>(); // Получаем ссылку на скрипт PlayerMovement
         UpdateHealthBar(); // Обновляем отображение здоровья в начале
     }
 
@@ -106,6 +60,10 @@ public class HpBar : MonoBehaviour
                 TakeDamage(HP / 2); // Если высота падения больше 10 единиц, наносим урон в размере половины текущего здоровья
             }
         }
+        else if (collision.gameObject.CompareTag("Laser"))
+        {
+            TakeDamage(95); // Наносим урон, если игрок сталкивается с лазером
+        }
     }
 
     private void OnCollisionExit2D(Collision2D collision)
@@ -125,4 +83,3 @@ public class HpBar : MonoBehaviour
         }
     }
 }
-
