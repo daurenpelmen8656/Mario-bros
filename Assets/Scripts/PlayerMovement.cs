@@ -23,6 +23,8 @@ public class PlayerMovement : MonoBehaviour
     private bool isSpeedBoosted = false; // Переменная для проверки, активирован ли буст скорости
     public float speedBoostDuration = 5f; // Длительность действия буста скорости
 
+    private float moveDirection = 0; // Направление движения
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -33,7 +35,7 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        float richtung = Input.GetAxis("Horizontal");
+        float richtung = Input.GetAxis("Horizontal") + moveDirection;
 
         if (richtung != 0)
         {
@@ -73,6 +75,30 @@ public class PlayerMovement : MonoBehaviour
         if (hasMagnet)
         {
             AttractFruits(); // Притягиваем фрукты, если магнит подобран
+        }
+    }
+
+    public void MoveLeft()
+    {
+        moveDirection = -1;
+    }
+
+    public void MoveRight()
+    {
+        moveDirection = 1;
+    }
+
+    public void StopMoving()
+    {
+        moveDirection = 0;
+    }
+
+    public void Jump()
+    {
+        if (isgrounded)
+        {
+            rb.AddForce(Vector2.up * jumph, ForceMode2D.Impulse);
+            isgrounded = false;
         }
     }
 
