@@ -12,6 +12,7 @@ TagManager:
   - Spike
   - Magnet
   - SpeedBoost
+  - Music
   layers:
   - Default
   - TransparentFX

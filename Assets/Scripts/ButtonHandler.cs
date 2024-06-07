@@ -26,6 +26,7 @@ public class ButtonHandler : MonoBehaviour
 
     public void OnJumpButtonDown()
     {
+
         playerMovement.Jump();
     }
 }

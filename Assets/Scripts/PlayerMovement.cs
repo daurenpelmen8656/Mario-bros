@@ -25,6 +25,8 @@ public class PlayerMovement : MonoBehaviour
 
     private float moveDirection = 0; // Направление движения
 
+    public AudioSource jumpAudio, coinAudio, deathAudio, boostAudio, magnetAudio;
+
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -68,6 +70,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space) && isgrounded)
         {
+            jumpAudio.Play();
             rb.AddForce(Vector2.up * jumph, ForceMode2D.Impulse);
             isgrounded = false;
         }
@@ -97,7 +100,9 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isgrounded)
         {
+            jumpAudio.Play();
             rb.AddForce(Vector2.up * jumph, ForceMode2D.Impulse);
+            
             isgrounded = false;
         }
     }
@@ -114,6 +119,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.gameObject.tag == "Fruit")
         {
+            coinAudio.Play();
             m.Addmoney();
             Destroy(other.gameObject);
         }
@@ -128,8 +134,10 @@ public class PlayerMovement : MonoBehaviour
         }
         if (other.gameObject.tag == "SpeedBoost")
         {
+
             StartCoroutine(SpeedBoost()); // Запускаем корутину для увеличения скорости
             Destroy(other.gameObject); // Уничтожаем объект буста скорости
+            boostAudio.Play();
         }
     }
 
