@@ -6,61 +6,73 @@ using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
-    public float speed = 5; // Скорость движения игрока
-    private Rigidbody2D rb; // Компонент Rigidbody2D для управления физикой
-    public float jumph = 5; // Сила прыжка
-    private bool isgrounded = false; // Флаг, указывающий, находится ли игрок на земле
+    public float speed = 5;
+    private Rigidbody2D rb;
+    public float jumph = 5;
+    private bool isgrounded = false;
 
-    private Animator anim; // Компонент Animator для управления анимацией
-    private Vector3 rotation; // Вектор для хранения текущей ориентации объекта
+    private Animator anim;
+    private Vector3 rotation;
 
-    private CoinManager m; // Ссылка на компонент CoinManager для управления монетами
+    private CoinManager m;
+
+    public bool hasMagnet = false; // Переменная для проверки, подобрал ли игрок магнит
+    public float magnetRadius = 5f; // Радиус действия магнита
+    public float magnetStrength = 10f; // Сила притяжения
+
+    private bool isSpeedBoosted = false; // Переменная для проверки, активирован ли буст скорости
+    public float speedBoostDuration = 5f; // Длительность действия буста скорости
 
     private void Start()
     {
-        rb = GetComponent<Rigidbody2D>(); // Получаем компонент Rigidbody2D
-        anim = GetComponent<Animator>(); // Получаем компонент Animator
-        rotation = transform.eulerAngles; // Сохраняем текущую ориентацию объекта
-        m = GameObject.FindGameObjectWithTag("Text").GetComponent<CoinManager>(); // Находим и сохраняем компонент CoinManager по тегу "Text"
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        rotation = transform.eulerAngles;
+        m = GameObject.FindGameObjectWithTag("Text").GetComponent<CoinManager>();
     }
 
     void Update()
     {
-        float richtung = Input.GetAxis("Horizontal"); // Получаем ввод по оси "Horizontal" (влево-вправо)
+        float richtung = Input.GetAxis("Horizontal");
 
         if (richtung != 0)
         {
-            anim.SetBool("isRunning", true); // Устанавливаем анимацию бега
+            anim.SetBool("isRunning", true);
         }
         else
         {
-            anim.SetBool("isRunning", false); // Останавливаем анимацию бега
+            anim.SetBool("isRunning", false);
         }
 
         if (richtung < 0)
         {
-            transform.localScale = new Vector3(-1.5f, 1.5f, 1); // Инвертируем масштаб по оси X для поворота влево
+            transform.localScale = new Vector3(-1.5f, 1.5f, 1);
         }
         if (richtung > 0)
         {
-            transform.localScale = new Vector3(1.5f, 1.5f, 1); // Восстанавливаем масштаб по оси X для поворота вправо
+            transform.localScale = new Vector3(1.5f, 1.5f, 1);
         }
 
-        rb.velocity = new Vector2(richtung * speed, rb.velocity.y); // Устанавливаем скорость движения по оси X
+        rb.velocity = new Vector2(richtung * speed, rb.velocity.y);
 
         if (!isgrounded)
         {
-            anim.SetBool("isJumping", true); // Устанавливаем анимацию прыжка
+            anim.SetBool("isJumping", true);
         }
         else
         {
-            anim.SetBool("isJumping", false); // Останавливаем анимацию прыжка
+            anim.SetBool("isJumping", false);
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && isgrounded)
         {
-            rb.AddForce(Vector2.up * jumph, ForceMode2D.Impulse); // Добавляем силу для прыжка
-            isgrounded = false; // Устанавливаем флаг, что игрок больше не на земле
+            rb.AddForce(Vector2.up * jumph, ForceMode2D.Impulse);
+            isgrounded = false;
+        }
+
+        if (hasMagnet)
+        {
+            AttractFruits(); // Притягиваем фрукты, если магнит подобран
         }
     }
 
@@ -68,7 +80,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.tag == "ground")
         {
-            isgrounded = true; // Устанавливаем флаг, что игрок на земле
+            isgrounded = true;
         }
     }
 
@@ -76,12 +88,49 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.gameObject.tag == "Fruit")
         {
-            m.Addmoney(); // Добавляем монеты
-            Destroy(other.gameObject); // Уничтожаем объект фрукта
+            m.Addmoney();
+            Destroy(other.gameObject);
         }
         if (other.gameObject.tag == "Finish")
         {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Загружаем следующую сцену
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         }
+        if (other.gameObject.tag == "Magnet")
+        {
+            hasMagnet = true; // Устанавливаем флаг, что магнит подобран
+            Destroy(other.gameObject); // Уничтожаем объект магнита
+        }
+        if (other.gameObject.tag == "SpeedBoost")
+        {
+            StartCoroutine(SpeedBoost()); // Запускаем корутину для увеличения скорости
+            Destroy(other.gameObject); // Уничтожаем объект буста скорости
+        }
+    }
+
+    IEnumerator SpeedBoost()
+    {
+        speed *= 2; // Удваиваем скорость игрока
+        isSpeedBoosted = true; // Устанавливаем флаг, что буст скорости активирован
+
+        yield return new WaitForSeconds(speedBoostDuration); // Ждем окончания действия буста
+
+        speed /= 2; // Восстанавливаем исходную скорость игрока
+        isSpeedBoosted = false; // Сбрасываем флаг буста скорости
+    }
+
+    void AttractFruits()
+    {
+        Collider2D[] fruits = Physics2D.OverlapCircleAll(transform.position, magnetRadius, LayerMask.GetMask("Fruit"));
+        foreach (Collider2D fruit in fruits)
+        {
+            Vector2 direction = (Vector2)transform.position - (Vector2)fruit.transform.position;
+            fruit.GetComponent<Rigidbody2D>().AddForce(direction.normalized * magnetStrength);
+        }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(transform.position, magnetRadius);
     }
 }

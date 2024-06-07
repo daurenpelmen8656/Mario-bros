@@ -10,6 +10,8 @@ TagManager:
   - Snake
   - 'Ground '
   - Spike
+  - Magnet
+  - SpeedBoost
   layers:
   - Default
   - TransparentFX
@@ -18,7 +20,7 @@ TagManager:
   - Water
   - UI
   - Camera
-  - 
+  - Fruit
   - 
   - 
   - 
