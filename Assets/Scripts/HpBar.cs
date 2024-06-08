@@ -35,6 +35,12 @@ public class HpBar : MonoBehaviour
         UpdateHealthBar(); // Обновляем отображение здоровья
     }
 
+    public void RestoreFullHealth()
+    {
+        HP = 100f; // Восстанавливаем здоровье до максимума
+        UpdateHealthBar(); // Обновляем отображение здоровья
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Snake") || collision.gameObject.CompareTag("Spike"))
