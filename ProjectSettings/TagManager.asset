@@ -14,6 +14,7 @@ TagManager:
   - SpeedBoost
   - Music
   - JumpBoost
+  - Laser
   layers:
   - Default
   - TransparentFX
