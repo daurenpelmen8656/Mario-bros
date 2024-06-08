@@ -1,15 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Laser : MonoBehaviour
 {
     public float speed = 5f;
     public float damage = 10f;
+    public float duration = 2f; // Длительность существования лазера
+
+    void Start()
+    {
+        Destroy(gameObject, duration); // Уничтожаем лазер через заданное время
+    }
 
     void Update()
     {
-        transform.Translate(Vector2.right * speed * Time.deltaTime);
+        // Убедитесь, что лазер движется в правильном направлении
+        transform.Translate(Vector2.left * speed * Time.deltaTime); // Движение вправо
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -21,7 +26,6 @@ public class Laser : MonoBehaviour
             {
                 hpBar.TakeDamage(damage);
             }
-            // Добавляем эффект взрыва, если необходимо
             Destroy(gameObject);
         }
     }

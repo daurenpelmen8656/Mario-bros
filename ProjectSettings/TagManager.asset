@@ -13,6 +13,7 @@ TagManager:
   - Magnet
   - SpeedBoost
   - Music
+  - JumpBoost
   layers:
   - Default
   - TransparentFX

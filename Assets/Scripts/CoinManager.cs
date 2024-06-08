@@ -11,13 +11,13 @@ public class CoinManager : MonoBehaviour
     // ћетод Start вызываетс€ один раз при инициализации
     void Start()
     {
-        geld = PlayerPrefs.GetInt("Money", 0); // ѕолучаем сохраненное значение денег из PlayerPrefs, если его нет, то значение по умолчанию - 0
+        // ѕолучаем сохраненное значение денег из PlayerPrefs, если его нет, то значение по умолчанию - 0
     }
 
     // ћетод Update вызываетс€ каждый кадр
     void Update()
     {
-        money.text = PlayerPrefs.GetInt("Money", 0).ToString(); // ќбновл€ем текст UI с текущим значением денег из PlayerPrefs
+        money.text = geld.ToString(); // ќбновл€ем текст UI с текущим значением денег
     }
 
     // ћетод дл€ добавлени€ денег (монет)

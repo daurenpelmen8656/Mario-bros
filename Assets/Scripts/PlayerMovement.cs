@@ -23,6 +23,10 @@ public class PlayerMovement : MonoBehaviour
     private bool isSpeedBoosted = false; // Переменная для проверки, активирован ли буст скорости
     public float speedBoostDuration = 5f; // Длительность действия буста скорости
 
+    private bool isJumpBoosted = false; // Переменная для проверки, активирован ли буст прыжка
+    public float jumpBoostDuration = 5f; // Длительность действия буста прыжка
+    public float jumpBoostMultiplier = 2f; // Множитель для увеличения высоты прыжка
+
     private float moveDirection = 0; // Направление движения
 
     public AudioSource jumpAudio, coinAudio, deathAudio, boostAudio, magnetAudio;
@@ -102,7 +106,6 @@ public class PlayerMovement : MonoBehaviour
         {
             jumpAudio.Play();
             rb.AddForce(Vector2.up * jumph, ForceMode2D.Impulse);
-            
             isgrounded = false;
         }
     }
@@ -134,9 +137,14 @@ public class PlayerMovement : MonoBehaviour
         }
         if (other.gameObject.tag == "SpeedBoost")
         {
-
             StartCoroutine(SpeedBoost()); // Запускаем корутину для увеличения скорости
             Destroy(other.gameObject); // Уничтожаем объект буста скорости
+            boostAudio.Play();
+        }
+        if (other.gameObject.tag == "JumpBoost")
+        {
+            StartCoroutine(JumpBoost()); // Запускаем корутину для увеличения высоты прыжка
+            Destroy(other.gameObject); // Уничтожаем объект буста прыжка
             boostAudio.Play();
         }
     }
@@ -150,6 +158,17 @@ public class PlayerMovement : MonoBehaviour
 
         speed /= 2; // Восстанавливаем исходную скорость игрока
         isSpeedBoosted = false; // Сбрасываем флаг буста скорости
+    }
+
+    IEnumerator JumpBoost()
+    {
+        jumph *= jumpBoostMultiplier; // Увеличиваем высоту прыжка игрока
+        isJumpBoosted = true; // Устанавливаем флаг, что буст прыжка активирован
+
+        yield return new WaitForSeconds(jumpBoostDuration); // Ждем окончания действия буста
+
+        jumph /= jumpBoostMultiplier; // Восстанавливаем исходную высоту прыжка
+        isJumpBoosted = false; // Сбрасываем флаг буста прыжка
     }
 
     void AttractFruits()
