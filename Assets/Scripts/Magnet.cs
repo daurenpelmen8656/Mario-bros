@@ -1,33 +1,19 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Magnet : MonoBehaviour
 {
-    public float magnetRadius = 5f; // Радиус действия магнита
-    public float magnetStrength = 10f; // Сила притяжения
+    public float magnetDuration = 10f; // Длительность действия магнита
 
-    void Update()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        AttractFruits();
-    }
-
-    void AttractFruits()
-    {
-        Collider2D[] fruits = Physics2D.OverlapCircleAll(transform.position, magnetRadius, LayerMask.GetMask("Fruit"));
-        Debug.Log("Fruits found: " + fruits.Length);
-        foreach (Collider2D fruit in fruits)
+        if (other.CompareTag("Player"))
         {
-            Vector2 direction = (Vector2)transform.position - (Vector2)fruit.transform.position;
-            fruit.GetComponent<Rigidbody2D>().AddForce(direction.normalized * magnetStrength);
-            Debug.Log("Attracting fruit: " + fruit.name);
+            PlayerMovement player = other.GetComponent<PlayerMovement>();
+            if (player != null)
+            {
+                player.ActivateMagnet(magnetDuration); // Активируем магнит у игрока
+                Destroy(gameObject); // Уничтожаем объект магнита после активации
+            }
         }
-    }
-
-
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.blue;
-        Gizmos.DrawWireSphere(transform.position, magnetRadius);
     }
 }

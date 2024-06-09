@@ -18,7 +18,7 @@ public class PlayerMovement : MonoBehaviour
 
     public bool hasMagnet = false; // Переменная для проверки, подобрал ли игрок магнит
     public float magnetRadius = 5f; // Радиус действия магнита
-    public float magnetStrength = 10f; // Сила притяжения
+    public float magnetDuration = 10f; // Длительность действия магнита
 
     private bool isSpeedBoosted = false; // Переменная для проверки, активирован ли буст скорости
     public float speedBoostDuration = 5f; // Длительность действия буста скорости
@@ -26,6 +26,8 @@ public class PlayerMovement : MonoBehaviour
     private bool isJumpBoosted = false; // Переменная для проверки, активирован ли буст прыжка
     public float jumpBoostDuration = 5f; // Длительность действия буста прыжка
     public float jumpBoostMultiplier = 2f; // Множитель для увеличения высоты прыжка
+
+    public bool isInvincible = false; // Переменная для проверки, активирован ли буст неуязвимости
 
     private float moveDirection = 0; // Направление движения
 
@@ -81,7 +83,7 @@ public class PlayerMovement : MonoBehaviour
 
         if (hasMagnet)
         {
-            AttractFruits(); // Притягиваем фрукты, если магнит подобран
+            CollectFruits(); // Собираем фрукты, если магнит подобран
         }
     }
 
@@ -122,7 +124,10 @@ public class PlayerMovement : MonoBehaviour
     {
         if (other.gameObject.tag == "Fruit")
         {
-            coinAudio.Play();
+            if (coinAudio != null)
+            {
+                coinAudio.Play();
+            }
             m.Addmoney();
             Destroy(other.gameObject);
         }
@@ -132,20 +137,30 @@ public class PlayerMovement : MonoBehaviour
         }
         if (other.gameObject.tag == "Magnet")
         {
-            hasMagnet = true; // Устанавливаем флаг, что магнит подобран
+            StartCoroutine(ActivateMagnet(magnetDuration)); // Запускаем корутину для активации магнита
             Destroy(other.gameObject); // Уничтожаем объект магнита
+            if (magnetAudio != null)
+            {
+                magnetAudio.Play();
+            }
         }
         if (other.gameObject.tag == "SpeedBoost")
         {
             StartCoroutine(SpeedBoost()); // Запускаем корутину для увеличения скорости
             Destroy(other.gameObject); // Уничтожаем объект буста скорости
-            boostAudio.Play();
+            if (boostAudio != null)
+            {
+                boostAudio.Play();
+            }
         }
         if (other.gameObject.tag == "JumpBoost")
         {
             StartCoroutine(JumpBoost()); // Запускаем корутину для увеличения высоты прыжка
             Destroy(other.gameObject); // Уничтожаем объект буста прыжка
-            boostAudio.Play();
+            if (boostAudio != null)
+            {
+                boostAudio.Play();
+            }
         }
     }
 
@@ -171,13 +186,31 @@ public class PlayerMovement : MonoBehaviour
         isJumpBoosted = false; // Сбрасываем флаг буста прыжка
     }
 
-    void AttractFruits()
+    public IEnumerator ActivateInvincibility(float duration)
+    {
+        isInvincible = true; // Делаем игрока неуязвимым
+        yield return new WaitForSeconds(duration); // Ждем окончания действия буста
+        isInvincible = false; // Восстанавливаем возможность получать урон
+    }
+
+    public IEnumerator ActivateMagnet(float duration)
+    {
+        hasMagnet = true; // Включаем магнит
+        yield return new WaitForSeconds(duration); // Ждем окончания действия магнита
+        hasMagnet = false; // Выключаем магнит
+    }
+
+    void CollectFruits()
     {
         Collider2D[] fruits = Physics2D.OverlapCircleAll(transform.position, magnetRadius, LayerMask.GetMask("Fruit"));
         foreach (Collider2D fruit in fruits)
         {
-            Vector2 direction = (Vector2)transform.position - (Vector2)fruit.transform.position;
-            fruit.GetComponent<Rigidbody2D>().AddForce(direction.normalized * magnetStrength);
+            if (coinAudio != null)
+            {
+                coinAudio.Play();
+            }
+            m.Addmoney();
+            Destroy(fruit.gameObject);
         }
     }
 

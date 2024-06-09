@@ -15,6 +15,7 @@ TagManager:
   - Music
   - JumpBoost
   - Laser
+  - FalseDoor
   layers:
   - Default
   - TransparentFX

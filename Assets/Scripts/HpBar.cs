@@ -31,8 +31,11 @@ public class HpBar : MonoBehaviour
 
     public void TakeDamage(float damage)
     {
-        HP -= damage; // Уменьшаем здоровье на величину урона
-        UpdateHealthBar(); // Обновляем отображение здоровья
+        if (!playerMovement.isInvincible) // Проверяем, активирован ли буст неуязвимости
+        {
+            HP -= damage; // Уменьшаем здоровье на величину урона
+            UpdateHealthBar(); // Обновляем отображение здоровья
+        }
     }
 
     public void RestoreFullHealth()
@@ -51,24 +54,27 @@ public class HpBar : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (isFalling && collision.gameObject.CompareTag("ground"))
+        if (!playerMovement.isInvincible) // Проверяем, активирован ли буст неуязвимости
         {
-            isFalling = false; // Если игрок сталкивается с землей после падения, сбрасываем флаг падения
-            float fallDistance = fallStartY - transform.position.y; // Вычисляем высоту падения
+            if (isFalling && collision.gameObject.CompareTag("ground"))
+            {
+                isFalling = false; // Если игрок сталкивается с землей после падения, сбрасываем флаг падения
+                float fallDistance = fallStartY - transform.position.y; // Вычисляем высоту падения
 
-            if (fallDistance > 20f)
-            {
-                HP = 0; // Если высота падения больше 20 единиц, здоровье становится 0
-                ShowGameOverScreen(); // Показываем экран Game Over
+                if (fallDistance > 20f)
+                {
+                    HP = 0; // Если высота падения больше 20 единиц, здоровье становится 0
+                    ShowGameOverScreen(); // Показываем экран Game Over
+                }
+                else if (fallDistance > 10f)
+                {
+                    TakeDamage(HP / 2); // Если высота падения больше 10 единиц, наносим урон в размере половины текущего здоровья
+                }
             }
-            else if (fallDistance > 10f)
+            else if (collision.gameObject.CompareTag("Laser"))
             {
-                TakeDamage(HP / 2); // Если высота падения больше 10 единиц, наносим урон в размере половины текущего здоровья
+                TakeDamage(95); // Наносим урон, если игрок сталкивается с лазером
             }
-        }
-        else if (collision.gameObject.CompareTag("Laser"))
-        {
-            TakeDamage(95); // Наносим урон, если игрок сталкивается с лазером
         }
     }
 
