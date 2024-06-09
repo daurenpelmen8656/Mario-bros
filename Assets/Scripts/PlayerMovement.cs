@@ -31,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
 
     private float moveDirection = 0; // Направление движения
 
-    public AudioSource jumpAudio, coinAudio, deathAudio, boostAudio, magnetAudio;
+    public AudioSource jumpAudio, coinAudio, deathAudio, boostAudio, magnetAudio, fallAudio;
 
     private void Start()
     {
@@ -116,6 +116,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (collision.gameObject.tag == "ground")
         {
+            fallAudio.Play();
             isgrounded = true;
         }
     }
